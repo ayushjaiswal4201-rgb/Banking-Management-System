@@ -158,14 +158,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true, message: "Login successful" };
   }, [users, passwords]);
 
-  const register = useCallback((data: any, password: string) => {
+  const register = useCallback((data: Omit<User, "id" | "accountNumber" | "balance" | "role" | "isBlocked" | "failedAttempts" | "createdAt">, password: string) => {
     const accountNumber = generateAccountNumber();
     const newUser: User = {
       id: Date.now().toString(), accountNumber, ...data, balance: 0, role: "customer",
       isBlocked: false, failedAttempts: 0, createdAt: new Date().toISOString().split("T")[0],
     };
     setUsers(prev => [...prev, newUser]);
-    (passwords as any)[accountNumber] = password;
+    (passwords as Record<string, string>)[accountNumber] = password;
     addNotification(newUser.id, "Welcome to Finova Bank! Your account has been created.", "success");
     return { success: true, accountNumber };
   }, [passwords, addNotification]);
